@@ -7,10 +7,14 @@ if (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     exit
 }
 
+# Use script's parent directory as project root
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$projectRoot = Split-Path -Parent $scriptDir
+
 $taskName = "LiveWall_Startup"
-$actionPath = "c:\Users\visha\Downloads\wallpaper project\livewall\start-app.cmd"
+$actionPath = Join-Path $projectRoot "scripts\start-app.cmd"
 $actionArgs = "--hidden"
-$workingDir = "c:\Users\visha\Downloads\wallpaper project\livewall"
+$workingDir = $projectRoot
 
 # 1. CLEANUP: Remove redundant and slow startup entries
 $startupFolder = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup"
@@ -27,19 +31,18 @@ if (Test-Path $batPath) {
 }
 
 # 2. PREREQUISITES: Ensure app is ready for startup
-Write-Host "Verifying installation..." -ForegroundColor Gray
+Write-Host "Verifying installation at $workingDir..." -ForegroundColor Gray
 if (-not (Test-Path "$workingDir\node_modules")) {
-    Write-Host "node_modules missing! Running one-time installation..." -ForegroundColor Yellow
-    pushd $workingDir
-    npm install
-    popd
+    Write-Host "node_modules missing! Please run scripts\setup.ps1 first." -ForegroundColor Red
+    Pause
+    exit
 }
-if (-not (Test-Path "$workingDir\dist\index.html")) {
+if (-not (Test-Path "$workingDir\frontend\dist\index.html") -and -not (Test-Path "$workingDir\dist\index.html")) {
     Write-Host "UI Build missing! Building now..." -ForegroundColor Yellow
-    pushd $workingDir
+    Set-Location $workingDir
     npm run build:ui
-    popd
 }
+
 # 3. CONFIGURE: Create a Fast, High-Privilege Scheduled Task
 $action = New-ScheduledTaskAction -Execute $actionPath -Argument $actionArgs -WorkingDirectory $workingDir
 $trigger = New-ScheduledTaskTrigger -AtLogOn
@@ -59,7 +62,6 @@ Set-ScheduledTask -InputObject $task
 Write-Host ""
 Write-Host "=========================================================="
 Write-Host "SUCCESS! LiveWall startup configured."
-Write-Host "The 10-second delay has been removed."
 Write-Host "LiveWall will now start instantly with highest permissions."
 Write-Host "=========================================================="
 Write-Host ""

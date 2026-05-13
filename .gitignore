@@ -1,7 +1,26 @@
+# Dependencies
 node_modules/
+
+# Build outputs
 dist/
 dist-electron/
+dist-app/
 build-output/
+release/
+
+# Logs
+*.log
+*_log.txt
+build.txt
+build3.txt
+
+# Temp folders
 .node/
 .userdata/
-*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# Large files mentioned in git error
+**/resources/app.asar

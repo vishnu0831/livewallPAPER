@@ -24,7 +24,7 @@
     "appId": "com.livewall.app",
     "productName": "LiveWall",
     "directories": {
-      "output": "build-output"
+      "output": "dist-app"
     },
     "win": {
       "target": "nsis"
