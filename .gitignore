@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dist-electron/
+build-output/
+.node/
+.userdata/
+*.log

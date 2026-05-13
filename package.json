@@ -1,0 +1,47 @@
+{
+  "name": "livewall",
+  "version": "1.0.0",
+  "description": "Windows video wallpaper app",
+  "main": "backend/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build:ui": "vite build",
+    "build": "vite build && electron-builder",
+    "start": "electron ."
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "sudo-prompt": "^9.2.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.2.1",
+    "electron": "^29.1.0",
+    "electron-builder": "^26.8.1",
+    "vite": "^5.1.4"
+  },
+  "build": {
+    "appId": "com.livewall.app",
+    "productName": "LiveWall",
+    "directories": {
+      "output": "build-output"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "createStartMenuShortcut": true
+    },
+    "asarUnpack": [
+      "**/node_modules/electron-edge-js/**/*",
+      "backend/monitor.exe",
+      "backend/attach.exe"
+    ],
+    "extraMetadata": {
+      "main": "backend/main.cjs"
+    }
+  }
+}
